@@ -3,11 +3,11 @@
 Neste punto comentarei os arquivos configurados para levar a cabo esta práctica:
 
 
-`Docker-compose.yml`
+**Docker-compose.yml**
 
 Aqui configuraremos o yaml como nos casos das anteriores prácticas. Có servidor, o dns e a rede.
 
-`web`
+**web**
 
 Nesta parte definimos a imaxe, o nome do servidor, o porto que empregaremos, os volumes que máis adiante configuramos e a red
 
@@ -25,7 +25,7 @@ web:
         ipv4_address: 172.39.4.2
 ```  
 
-`dns`
+**dns**
 
 ```
 dns:
@@ -40,7 +40,7 @@ dns:
       apared:
         ipv4_address: 172.39.4.3
 ```
-`rede`
+**rede**
 ```
 networks:
   apache_red:
@@ -50,11 +50,11 @@ networks:
       config:
         - subnet: 172.39.0.0/16
 ```
-`confApache`
+**confApache**
 
 Esta carpeta podemola descargar do repositorio de damian ou descargando apache, onde so debemos engadir dous ficheiros na carpeta "sites-available" pero o importante é na carpeta "sites-enable". Este dous ficheiros son os mismos para ambas carpeta. Tamén, no caso de querer empregar varios portos, debemos engadir no ficheiro "ports.conf" a liña listen 8000. Os ficheiros que engadiremos as carpetas son os seguintes:
 
-`fabulasmaravillosas.conf`
+**fabulasmaravillosas.conf**
 
 Neste arquivo debemos chamar ao porto 80 e configurar o seguinte: decir quen vai ser o admin, un correo xeralemnte; o nome e alias da nosa páxina web chamada fabulasmaravillosas, que será o que buscaremos no navegador para ver a nosa páxina; e o ruta onde teremos o noso index.html, que no meu caso teñoa creada nesa ruta.
 
@@ -67,7 +67,7 @@ Neste arquivo debemos chamar ao porto 80 e configurar o seguinte: decir quen vai
 </VirtualHost>
 ```
 
-`fabulasoscuras.conf`
+**fabulasoscuras.conf**
 
 Neste arquivo faremos o mesmo que no anterior, só que adaptandoo a esta páxina web, chamada fabulasoscuras.
 
@@ -80,7 +80,7 @@ Neste arquivo faremos o mesmo que no anterior, só que adaptandoo a esta páxina
 </VirtualHost>
 ```
 
-`confDNS`
+**confDNS**
 
 Nesta carpeta debemos configurar dúass cousas, a configuración, e as zonas, que no meu caso empreguei unha única zona.
 zonas
@@ -102,7 +102,7 @@ fabulasoscuras       IN      A       172.39.4.2  #páxina asociada a IP
 fabulasmaravillosas     IN      A       172.39.4.2  # páxina asociada a IP
 ```
 
-`conf`
+**conf**
 
 Nesta carpeta debemos ter al menos tres documentos. O primerio de todos é o named.conf.local, onde debemos chamar ao arquivo da zona, indicando o tipo e a ruta:
 
@@ -167,7 +167,7 @@ zone "255.in-addr.arpa" {
 	file "/etc/bind/db.255";
 };
 ```
-`www`
+**www**
 
 Nesta carpeta teremos outras dúas carpetas, chamadas exactemente que as páxinas e a ruta que nos documentos de configuración de apache, é decir, no meu caso unha carpeta chamada fabulasmaravillosas e outra carpeta chamada fabulasocuras. Dentro de cada carpeta, debemos ter os documentos index.html de cada páxina web.
 
