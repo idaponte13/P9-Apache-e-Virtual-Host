@@ -21,7 +21,7 @@ web:
       - ./www:/var/www
       - ./confApache:/etc/apache2
     networks:
-      apared:
+      apache_red:
         ipv4_address: 172.39.4.2
 ```  
 
@@ -37,7 +37,7 @@ dns:
       - ./confDNS/conf:/etc/bind
       - ./confDNS/zonas:/var/lib/bind
     networks:
-      apared:
+      apache_red:
         ipv4_address: 172.39.4.3
 ```
 **rede**
