@@ -56,7 +56,7 @@ Esta carpeta podemola descargar do repositorio de damian ou descargando apache, 
 
 **fabulasmaravillosas.conf**
 
-Neste arquivo debemos chamar ao porto 80 e configurar o seguinte: decir quen vai ser o admin, un correo xeralemnte; o nome e alias da nosa páxina web chamada fabulasmaravillosas, que será o que buscaremos no navegador para ver a nosa páxina; e o ruta onde teremos o noso index.html, que no meu caso teñoa creada nesa ruta.
+Neste arquivo debemos chamar ao porto configurado anteriormente, no meu caso será o porto 80, tamén diremos quen vai ser o admin, un correo xeralmente, o nome e o alias da nosa páxina, que será o que buscaremos no navegador. Por último a ruta onde temos o noso index.html.
 
 ```
 <VirtualHost *:80>
@@ -69,7 +69,7 @@ Neste arquivo debemos chamar ao porto 80 e configurar o seguinte: decir quen vai
 
 **fabulasoscuras.conf**
 
-Neste arquivo faremos o mesmo que no anterior, só que adaptandoo a esta páxina web, chamada fabulasoscuras.
+Faremos o mesmo que na páxina anterior.
 
 ```
 <VirtualHost *:80>
@@ -82,10 +82,11 @@ Neste arquivo faremos o mesmo que no anterior, só que adaptandoo a esta páxina
 
 **confDNS**
 
-Nesta carpeta debemos configurar dúass cousas, a configuración, e as zonas, que no meu caso empreguei unha única zona.
-zonas
+Nesta carpeta configuraremos as zonas e a propia configuración destas.
 
-Nesta carpeta debemos que ter o documento db.nome.int , que no meu caso o nome é asircastelao. Dentro deste documento, primero debemos empregar o servidor de nomes principal, no meu caso ns.asircastelao.int, e un correo de contacto; declaramos un rexistro NS que indica o servidor de nomes autoritativos para o dominio, neste caso ns.asircastelao.int; asociamos o nome do servidor á dirección IP do dns, no meu caso 172.39.4.3; e asociamos as páxinas webs a dirección IP da nosa web que definimos no docker-compose.yml, neste caso 172.39.4.2
+**Zonas**
+
+Nesta carpeta configuraremos la resolución de nomes da nosa zona directa. Dentro deste documento, primero debemos empregar o servidor de nomes principal, no meu caso ns.asircastelao.int, tamén declaramos un rexistro NS que indica o servidor de nomes autoritativos para o dominio, ademáis asociamos o nome do servidor á dirección IP do dns, e asociamos as páxinas webs á dirección IP.
 
 ```
 $TTL    604800  
@@ -104,7 +105,9 @@ fabulasmaravillosas     IN      A       172.39.4.2  # páxina asociada a IP
 
 **conf**
 
-Nesta carpeta debemos ter al menos tres documentos. O primerio de todos é o named.conf.local, onde debemos chamar ao arquivo da zona, indicando o tipo e a ruta:
+Dividiremos esta carpeta en 3 partes.
+
+O primerio de todo é o `named.conf.local`, onde debemos chamar ao arquivo da zona.
 
 ```
 zone "asircastelao.int" {
@@ -116,7 +119,7 @@ zone "asircastelao.int" {
 };
 ```
 
-O seguinte documento é named.conf.options onde primeiro indicamos o directorio, os forwarders como o de google, e outras opcións como a resolucion recursiva, permitir consultas e escoitar todas as interfaces:
+O seguinte documento é `named.conf.options`, aqui configuraremos as opcións xenerales que se aplican a todo o servidor DNS.
 ```
 options {
     directory "/var/cache/bind";
@@ -131,12 +134,12 @@ options {
     listen-on-v6 { any; };
 };
 ```
-O último documento é named.conf onde simplemente enlazamos os dous documentos anteriores, aunque poderíams facer os dous documentos anteriores neste.
+Por último `named.conf` onde simplemente enlazamos os dous documentos anteriores.
 ```
 include "/etc/bind/named.conf.options";
 include "/etc/bind/named.conf.local";
 ```
-Ademáis teño outro documento chamado named.conf.default-zones onde teño definido as zoas inversas.
+Adicionalmente, está o arquivo chamado `named.conf.default-zones` onde teño definido as zoas inversas.
 ```
 // prime the server with knowledge of the root servers
 zone "." {
@@ -169,17 +172,12 @@ zone "255.in-addr.arpa" {
 ```
 **www**
 
-Nesta carpeta teremos outras dúas carpetas, chamadas exactemente que as páxinas e a ruta que nos documentos de configuración de apache, é decir, no meu caso unha carpeta chamada fabulasmaravillosas e outra carpeta chamada fabulasocuras. Dentro de cada carpeta, debemos ter os documentos index.html de cada páxina web.
+Nesta carpeta teremos outras dúas carpetas, chamadas exactemente como as páxinas e dentro de cada carpeta, debemos ter os documentos index.html de cada páxina web.
 
-No meu caso, como se observou no documento docker-compose.yml, empreguei a ruta /var/www/ para enlazar os index.html, entonces empreguei os comandos sudo mkdir /var/www/fabulasmaravillosas e sudo nano /var/www/fabulasmaravillosas/index.html,onde escribín o documento html. Estos mesmos comandos repítense para a páxina fabulasoscuras.
+Uha vez configurado todo debemos realizar cambios no documento `sudo nano /etc/systemd/resolved.conf` onde debemos de buscar a liña do DNS e descomentala e añadir a dirección IP do noso DNS que configuramos co correspondete porto. Isto podemos comprobalo no .yml. 
 
-No caso de que á hora de crear as carpetas non te deixa xa que non tes apache descargado, facer os seguintes pasos: instalar apache2 co comando sudo apt install apache2, e cambiar a configuración do firewall cos comandos sudo ufw allow 'Apache', e por ultimo reiniciamos co comando sudo systemctl restart apache2
-configuracions extras
+```DNS=172.39.4.3#57```
 
-Además de todos os pasos anteriores, debemos realizar uns cambios na nosa máquina, o primeiro será entrar nun documento co comando sudo nano /etc/systemd/resolved.conf onde debemos de buscar a liña do DNS e descomentala, e temos que añadir a dirección IP do noso DNS que configuramos e o porto que empregamos, no meu caso :
+Para aplicar os cambios realizados debemos executar o seguinte comando ```systemctl restart systemd-resolved```.
 
-```DNS=172.39.4.3#51```
-
-Agora debemos gardar os cambios co comando sudo ```systemctl restart systemd-resolved```.
-
-Unha vez feito, debemos entrar na confiugaración de red da nosa máquina(arriba na dereita, entramos na red, e entramos na ruedita), e se vamos ao apartado de IPv4, debemos desactivar a opción de DNS automático, e por último reiniciar a nosa máquina
+Por ultimo accederemos a configuración de rede cableada da nosa maquina (arriba a dereita) e desactivaremos, no apartado de IPv4, o DNS automático.
